@@ -9,6 +9,7 @@ This is a Next.js 15 storefront for Saleor e-commerce platform. It uses the App 
 ## Environment Setup
 
 Required environment variables (see `.env.example`):
+
 - `NEXT_PUBLIC_SALEOR_API_URL` - Full Saleor GraphQL endpoint URL (e.g., `https://storefront1.saleor.cloud/graphql/`)
 - `NEXT_PUBLIC_STOREFRONT_URL` - Your storefront URL for canonical URLs in production
 - `SALEOR_APP_TOKEN` - Token used for fetching channels
@@ -70,6 +71,7 @@ src/app/
 **Critical workflow**: After creating or modifying any `.graphql` file in `src/graphql/`, you MUST run `pnpm run generate` to regenerate TypeScript types.
 
 GraphQL setup:
+
 - **Queries/Mutations**: Defined as `.graphql` files in `src/graphql/`
 - **Generated types**: Output to `src/gql/` (auto-generated, don't edit)
 - **Config**: `.graphqlrc.ts` configures GraphQL Codegen
@@ -97,6 +99,7 @@ src/checkout/
 ```
 
 **Important constraints**:
+
 - Checkout code CANNOT import from Next.js (`next/*`, `@next/*`)
 - ESLint will error if Next.js imports are used in `src/checkout/**`
 - Uses URQL for GraphQL client (not the main app's fetch-based approach)
@@ -113,6 +116,7 @@ src/checkout/
 ### Authentication
 
 Uses `@saleor/auth-sdk` for authentication:
+
 - SDK provides `useSaleorAuthContext()` hook
 - Handles token refresh and auth state
 - Server-side: `getServerAuthClient()` from `@/app/config`
@@ -136,6 +140,7 @@ Uses `@saleor/auth-sdk` for authentication:
 ### ESLint Rules
 
 Key rules enforced:
+
 - **No default exports** except for Next.js special files (page.tsx, layout.tsx, etc.) and config files
 - **Type imports**: Use inline type imports (`import { type Foo }`)
 - **Import order**: Enforced via `import/order`
@@ -145,12 +150,14 @@ Key rules enforced:
 ### TypeScript Paths
 
 Configured path aliases:
+
 - `@/*` → `./src/*`
 - `@ui/*` → `./src/components/*`
 
 ### Pre-commit Hooks
 
 Husky + lint-staged configured:
+
 - Runs ESLint on staged TypeScript/JavaScript files
 - Runs Prettier on all staged files
 
@@ -177,19 +184,21 @@ Visit `/api/draft` to enable draft mode, which disables caching for previewing c
 4. Use `executeGraphQL()` from `src/lib/graphql.ts` for server-side queries
 
 Example:
+
 ```typescript
 import { executeGraphQL } from "@/lib/graphql";
 import { ProductListDocument } from "@/gql/graphql";
 
 const data = await executeGraphQL(ProductListDocument, {
-  variables: { first: 12 },
-  cache: "force-cache",
+	variables: { first: 12 },
+	cache: "force-cache",
 });
 ```
 
 ### Checkout Integration
 
 To integrate checkout into a page:
+
 1. Import `Root` from `@/checkout/Root`
 2. Pass `saleorApiUrl` prop
 3. Provide checkout ID or order ID via URL search params (`?checkout=xxx` or `?order=xxx`)

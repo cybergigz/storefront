@@ -13,7 +13,13 @@
 		"lint": "next lint --dir src --fix",
 		"generate": "graphql-codegen --config .graphqlrc.ts",
 		"prepare": "husky install",
-		"test": "playwright test"
+		"test": "playwright test",
+		"mobile:dev": "pnpm --filter mobile dev",
+		"mobile:ios": "pnpm --filter mobile ios",
+		"mobile:android": "pnpm --filter mobile android",
+		"mobile:build": "pnpm --filter mobile build",
+		"shared:build": "pnpm --filter @repo/shared build",
+		"shared:watch": "pnpm --filter @repo/shared watch"
 	},
 	"dependencies": {
 		"@adyen/adyen-web": "5.53.3",

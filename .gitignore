@@ -5,6 +5,7 @@ gql/
 
 # Claude Code project instructions (keep local only)
 CLAUDE.md
+EXPO_IMPLEMENTATION_PLAN.md
 
 # dependencies
 /node_modules

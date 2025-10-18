@@ -1,14 +1,26 @@
-import React from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+	ActivityIndicator,
+	Alert,
+	Image,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "urql";
 import { PRODUCT_DETAIL_QUERY } from "@/lib/queries";
+import { useCartStore } from "@/lib/cart-store";
 
 const CHANNEL = "default-channel";
 
 export default function ProductDetailScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const router = useRouter();
+	const addItem = useCartStore((state) => state.addItem);
+	const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
 
 	const [result] = useQuery({
 		query: PRODUCT_DETAIL_QUERY,
@@ -41,6 +53,44 @@ export default function ProductDetailScreen() {
 	const price = product.pricing?.priceRange?.start?.gross;
 	const mainImage = product.media?.[0]?.url || product.thumbnail?.url;
 
+	const handleAddToCart = () => {
+		if (!price) {
+			Alert.alert("Error", "Product price not available");
+			return;
+		}
+
+		// If product has variants and none selected, show alert
+		if (product.variants && product.variants.length > 0 && !selectedVariant) {
+			Alert.alert("Select Variant", "Please select a variant before adding to cart");
+			return;
+		}
+
+		const variant = selectedVariant ? product.variants?.find((v: any) => v.id === selectedVariant) : null;
+
+		const itemPrice = variant?.pricing?.price?.gross?.amount || price.amount;
+		const itemCurrency = variant?.pricing?.price?.gross?.currency || price.currency;
+
+		addItem({
+			productId: product.id,
+			variantId: variant?.id,
+			name: product.name,
+			slug: product.slug,
+			price: itemPrice,
+			currency: itemCurrency,
+			thumbnail: product.thumbnail?.url,
+			variantName: variant?.name,
+		});
+
+		Alert.alert(
+			"Added to Cart",
+			`${product.name}${variant ? ` (${variant.name})` : ""} has been added to your cart`,
+			[
+				{ text: "Continue Shopping", style: "cancel" },
+				{ text: "View Cart", onPress: () => router.push("/(tabs)/two") },
+			],
+		);
+	};
+
 	return (
 		<ScrollView style={styles.container}>
 			{mainImage && <Image source={{ uri: mainImage }} style={styles.mainImage} resizeMode="cover" />}
@@ -63,24 +113,31 @@ export default function ProductDetailScreen() {
 
 				{product.variants && product.variants.length > 0 && (
 					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>Variants</Text>
+						<Text style={styles.sectionTitle}>Select Variant</Text>
 						{product.variants.map((variant: any) => {
 							const variantPrice = variant.pricing?.price?.gross;
+							const isSelected = selectedVariant === variant.id;
 							return (
-								<View key={variant.id} style={styles.variant}>
-									<Text style={styles.variantName}>{variant.name}</Text>
+								<TouchableOpacity
+									key={variant.id}
+									style={[styles.variant, isSelected && styles.variantSelected]}
+									onPress={() => setSelectedVariant(variant.id)}
+								>
+									<Text style={[styles.variantName, isSelected && styles.variantNameSelected]}>
+										{variant.name}
+									</Text>
 									{variantPrice && (
-										<Text style={styles.variantPrice}>
+										<Text style={[styles.variantPrice, isSelected && styles.variantPriceSelected]}>
 											{variantPrice.currency} {variantPrice.amount}
 										</Text>
 									)}
-								</View>
+								</TouchableOpacity>
 							);
 						})}
 					</View>
 				)}
 
-				<TouchableOpacity style={styles.addToCartButton}>
+				<TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
 					<Text style={styles.addToCartText}>Add to Cart</Text>
 				</TouchableOpacity>
 			</View>
@@ -142,14 +199,27 @@ const styles = StyleSheet.create({
 		backgroundColor: "#f5f5f5",
 		borderRadius: 8,
 		marginBottom: 8,
+		borderWidth: 2,
+		borderColor: "transparent",
+	},
+	variantSelected: {
+		backgroundColor: "#e3f2fd",
+		borderColor: "#2f95dc",
 	},
 	variantName: {
 		fontSize: 16,
 		color: "#333",
 	},
+	variantNameSelected: {
+		fontWeight: "600",
+		color: "#2f95dc",
+	},
 	variantPrice: {
 		fontSize: 16,
 		fontWeight: "600",
+		color: "#666",
+	},
+	variantPriceSelected: {
 		color: "#2f95dc",
 	},
 	addToCartButton: {

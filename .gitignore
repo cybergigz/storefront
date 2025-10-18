@@ -3,6 +3,9 @@ gql/
 
 .env
 
+# Claude Code project instructions (keep local only)
+CLAUDE.md
+
 # dependencies
 /node_modules
 /.pnp

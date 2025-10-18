@@ -59,13 +59,20 @@ export default function ProductDetailScreen() {
 			return;
 		}
 
-		// If product has variants and none selected, show alert
-		if (product.variants && product.variants.length > 0 && !selectedVariant) {
+		// Check if product has multiple variants
+		const hasMultipleVariants = product.variants && product.variants.length > 1;
+
+		// If product has multiple variants and none selected, show alert
+		if (hasMultipleVariants && !selectedVariant) {
 			Alert.alert("Select Variant", "Please select a variant before adding to cart");
 			return;
 		}
 
-		const variant = selectedVariant ? product.variants?.find((v: any) => v.id === selectedVariant) : null;
+		// Auto-select the only variant if there's just one
+		const effectiveVariantId = selectedVariant || product.variants?.[0]?.id;
+		const variant = effectiveVariantId
+			? product.variants?.find((v: any) => v.id === effectiveVariantId)
+			: null;
 
 		const itemPrice = variant?.pricing?.price?.gross?.amount || price.amount;
 		const itemCurrency = variant?.pricing?.price?.gross?.currency || price.currency;
@@ -111,7 +118,7 @@ export default function ProductDetailScreen() {
 					</View>
 				)}
 
-				{product.variants && product.variants.length > 0 && (
+				{product.variants && product.variants.length > 1 && (
 					<View style={styles.section}>
 						<Text style={styles.sectionTitle}>Select Variant</Text>
 						{product.variants.map((variant: any) => {

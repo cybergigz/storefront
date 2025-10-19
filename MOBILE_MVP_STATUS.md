@@ -36,17 +36,42 @@
   - Total price display
   - Checkout button (UI only)
 - [x] Updated tab navigation icons and labels
+- [x] Implemented cart functionality with Zustand:
+  - Add to cart with variant selection
+  - Update quantities
+  - Remove items
+  - Clear all items
+  - Calculate totals
+  - Cart badge showing item count
+- [x] Implemented user authentication:
+  - Sign Up screen with validation
+  - Sign In screen
+  - Account/Profile screen
+  - Secure token storage (expo-secure-store)
+  - Auto-refresh user data
+  - Logout functionality
+  - Cross-navigation between auth screens
 
 ## 📦 Files Created/Modified
 
 ### New Files Created:
 
-1. `/mobile/lib/graphql.ts` - URQL client configuration
-2. `/mobile/lib/queries.ts` - GraphQL queries
-3. `/mobile/.env.example` - Environment variable template
-4. `/mobile/app/product/[id].tsx` - Product detail screen
-5. `/mobile/README.md` - Mobile app documentation
-6. `/MOBILE_MVP_STATUS.md` - This file
+1. `/mobile/lib/graphql.ts` - URQL client configuration with auth
+2. `/mobile/lib/queries.ts` - GraphQL queries (products + auth)
+3. `/mobile/lib/cart-store.ts` - Zustand cart state management
+4. `/mobile/lib/types.ts` - TypeScript interfaces
+5. `/mobile/lib/auth.ts` - Custom auth client for React Native
+6. `/mobile/lib/auth-context.tsx` - Auth state management context
+7. `/mobile/lib/secure-storage.ts` - Platform-specific token storage
+8. `/mobile/.env.example` - Environment variable template
+9. `/mobile/app/product/[id].tsx` - Product detail screen with cart
+10. `/mobile/app/login.tsx` - Sign In screen
+11. `/mobile/app/signup.tsx` - Sign Up screen
+12. `/mobile/app/(tabs)/account.tsx` - Account/Profile screen
+13. `/mobile/README.md` - Mobile app documentation
+14. `/mobile/NETWORK_SETUP.md` - Network configuration guide
+15. `/mobile/babel.config.js` - Babel config for import.meta polyfill
+16. `/MOBILE_MVP_STATUS.md` - This file
 
 ### Modified Files:
 
@@ -109,36 +134,22 @@ pnpm mobile:dev
 
 ## 🔜 Next Steps (Future Work)
 
-### Phase 1: Complete Cart Functionality
-
-- Add Zustand store for cart state
-- Implement "Add to Cart" functionality
-- Show cart items in cart screen
-- Calculate cart totals
-
-### Phase 2: User Authentication
-
-- Integrate @saleor/auth-sdk
-- Add login screen
-- Add user account tab
-- Implement token management
-
-### Phase 3: Checkout Flow
+### Phase 1: Checkout Flow (Next Priority)
 
 - Create checkout screens
 - Add shipping address form
 - Add payment integration (Stripe/Adyen)
 - Order confirmation screen
 
-### Phase 4: Additional Features
+### Phase 2: Additional Features
 
 - Search functionality
 - Categories/Collections screens
 - Product filters
 - Order history
-- User profile
+- User profile settings
 
-### Phase 5: Shared Package Migration
+### Phase 3: Shared Package Migration
 
 - Move GraphQL operations to packages/shared
 - Move checkout logic to shared
@@ -146,13 +157,13 @@ pnpm mobile:dev
 
 ## 📊 Implementation Progress
 
-**Current Status**: ~30% complete for testable MVP
+**Current Status**: ~85% complete for testable MVP
 
 - ✅ Infrastructure: 100%
 - ✅ Basic UI screens: 100%
 - ✅ GraphQL integration: 100%
-- ⏳ Cart functionality: 20% (UI only)
-- ❌ Authentication: 0%
+- ✅ Cart functionality: 100% (Zustand state management)
+- ✅ Authentication: 100% (Sign Up + Sign In)
 - ❌ Checkout: 0%
 
 **What Can Be Tested Now**:
@@ -162,29 +173,40 @@ pnpm mobile:dev
 - Navigation between screens works
 - GraphQL queries can fetch products (with valid API URL)
 - UI looks good and is responsive
+- ✅ **Add products to cart** (with variant selection)
+- ✅ **Update cart quantities**
+- ✅ **Remove items from cart**
+- ✅ **View cart totals**
+- ✅ **Sign up for new account**
+- ✅ **Sign in with existing account**
+- ✅ **View user profile**
+- ✅ **Logout functionality**
 
 **What Cannot Be Tested Yet**:
 
-- Adding products to cart
 - Checkout process
-- User login/registration
 - Making actual purchases
 
 ## 💡 Notes
 
-- The app is now in a **testable state** for UI/UX review
-- GraphQL integration is complete but requires Saleor API configuration
-- Cart and checkout are placeholder UIs that need backend integration
+- The app is now in a **fully functional state** for testing core features
+- GraphQL integration is complete with Saleor API
+- ✅ Cart functionality is fully implemented with Zustand state management
+- ✅ User authentication (Sign Up/Sign In) is fully working
+- Checkout flow is the only major feature remaining
 - TypeScript configuration is fixed and stable
 - All dependencies are installed and working
+- Tested successfully on Android device
 
 ## 🐛 Known Issues
 
-1. Cart functionality is placeholder only (no state management yet)
-2. "Add to Cart" button does nothing (needs implementation)
-3. Channel name is hardcoded (should be configurable)
-4. No error recovery for network failures
-5. No offline mode or caching strategy
+1. ~~Cart functionality is placeholder only~~ ✅ FIXED
+2. ~~"Add to Cart" button does nothing~~ ✅ FIXED
+3. ~~User authentication not implemented~~ ✅ FIXED
+4. Channel name is hardcoded (should be configurable)
+5. No error recovery for network failures
+6. No offline mode or caching strategy
+7. Checkout not implemented yet
 
 ## 📝 Commit Recommendation
 

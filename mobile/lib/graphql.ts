@@ -11,8 +11,26 @@ const authenticatedFetch = async (url: RequestInfo | URL, options?: RequestInit)
 	const isAuthenticated = await saleorAuthClient.isAuthenticated();
 
 	if (isAuthenticated) {
-		// Use authenticated fetch from saleorAuthClient
-		return saleorAuthClient.fetchWithAuth(url, options);
+		try {
+			// Try authenticated fetch
+			const response = await saleorAuthClient.fetchWithAuth(url, options);
+
+			// Check if token expired (401 or specific error)
+			if (response.status === 401) {
+				console.log("Token expired, clearing and retrying without auth");
+				// Clear expired tokens
+				await saleorAuthClient.resetTokens();
+				// Retry without authentication
+				return fetch(url, options);
+			}
+
+			return response;
+		} catch (error) {
+			console.error("Auth fetch error:", error);
+			// On error, clear tokens and retry without auth
+			await saleorAuthClient.resetTokens();
+			return fetch(url, options);
+		}
 	}
 
 	// Fallback to regular fetch if not authenticated

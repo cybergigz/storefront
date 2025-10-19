@@ -117,6 +117,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 				const data = await response.json();
 
+				// Check for authentication errors (expired token)
+				if (data.errors?.some((err: any) => err.message?.includes("Signature has expired"))) {
+					console.log("Token expired during user refresh, clearing tokens");
+					await saleorAuthClient.resetTokens();
+					setUser(null);
+					return;
+				}
+
 				if (data.data?.me) {
 					setUser(data.data.me);
 				} else {
@@ -127,6 +135,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			}
 		} catch (error) {
 			console.error("Error fetching user:", error);
+			// Clear tokens on error to prevent using expired tokens
+			await saleorAuthClient.resetTokens();
 			setUser(null);
 		} finally {
 			setIsLoading(false);

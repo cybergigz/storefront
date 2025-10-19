@@ -68,6 +68,13 @@ export default function TabLayout() {
 					tabBarIcon: ({ color }) => <CartTabIcon color={color} />,
 				}}
 			/>
+			<Tabs.Screen
+				name="account"
+				options={{
+					title: "Account",
+					tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+				}}
+			/>
 		</Tabs>
 	);
 }

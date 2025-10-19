@@ -9,6 +9,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { graphqlClient } from "@/lib/graphql";
+import { AuthProvider } from "@/lib/auth-context";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -51,13 +52,18 @@ function RootLayoutNav() {
 	const colorScheme = useColorScheme();
 
 	return (
-		<URQLProvider value={graphqlClient}>
-			<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-				<Stack>
-					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-					<Stack.Screen name="modal" options={{ presentation: "modal" }} />
-				</Stack>
-			</ThemeProvider>
-		</URQLProvider>
+		<AuthProvider>
+			<URQLProvider value={graphqlClient}>
+				<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+					<Stack>
+						<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+						<Stack.Screen name="modal" options={{ presentation: "modal" }} />
+						<Stack.Screen name="login" options={{ title: "Sign In", presentation: "modal" }} />
+						<Stack.Screen name="signup" options={{ title: "Create Account", presentation: "modal" }} />
+						<Stack.Screen name="product/[id]" options={{ title: "Product Details" }} />
+					</Stack>
+				</ThemeProvider>
+			</URQLProvider>
+		</AuthProvider>
 	);
 }
